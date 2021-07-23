@@ -36,7 +36,7 @@ $ oc get ns <NAMESPACE_NAME>
 From the root folder of this git repository, just execute:
 
 ```bash
-./hugo-websites/deploy.sh ../openmobility.eclipse.org/k8s/deployment.jsonnet ../jenkins-pipeline-shared/resources/org/eclipsefdn/hugoWebsite/Dockerfile
+./hugo-websites/deploy.sh ../openmobility.eclipse.org/k8s/deployment.jsonnet ../jenkins-pipeline-shared/resources/org/eclipsefdn/hugoWebsite/Dockerfile ../openmobility.eclipse.org
 ```
 
 It expectes that a proper `deployment.jsonnet` exists. the minimal content for such a file is:
@@ -48,3 +48,11 @@ deployment.newProductionDeploymentWithStaging(
   "openmobility.eclipse.org", "openmobility-staging.eclipse.org"
 )
 ```
+
+Verify that site is properly deployed:
+
+```bash
+kubectl port-forward svc/openmobility-eclipse-org 8080:80
+```
+
+and open a webbrowser to http://localhost:8080

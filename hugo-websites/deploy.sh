@@ -27,17 +27,17 @@ buildEnv() {
   environment="$(echo "${deployment}" | jq -r '.metadata.labels.environment')"
   image="$(echo "${deployment}" | jq -r '.spec.template.spec.containers[] | select(.name == "nginx") | .image')"
 
-  if [[ "${environment}" == "production" ]]; then 
+  if [[ "${environment}" == "production" ]]; then
     BASE_NGINX_IMAGE_TAG="stable-alpine"
   else
     BASE_NGINX_IMAGE_TAG="stable-alpine-for-staging"
   fi
 
-  docker build --pull --build-arg NGINX_IMAGE_TAG="${BASE_NGINX_IMAGE_TAG}" -t "${image}" -f "${DOCKERFILE}" "${CONTEXT}"
+  docker build --pull --build-arg NGINX_IMAGE_TAG="${BASE_NGINX_IMAGE_TAG}" -t "${image}" -f "${DOCKERFILE}" "${CONTEXT}" --no-cache
   docker push "${image}"
 }
 
 for deploymentName in $(jsonnet "${DEPLOYMENT}" | jq -r '.[] | select(.kind == "Deployment").metadata.name'); do
   buildEnv "$(jsonnet "${DEPLOYMENT}" | jq -r '.[] | select(.kind == "Deployment" and .metadata.name == "'"${deploymentName}"'")')"
 done
-jsonnet "${DEPLOYMENT}" | jq '.[]' | kubectl --context=okd apply -f -
+jsonnet "${DEPLOYMENT}" | jq '.[]' | kubectl apply -f -

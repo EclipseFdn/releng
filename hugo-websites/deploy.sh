@@ -33,7 +33,7 @@ buildEnv() {
     BASE_NGINX_IMAGE_TAG="stable-alpine-for-staging"
   fi
 
-  docker build --pull --build-arg NGINX_IMAGE_TAG="${BASE_NGINX_IMAGE_TAG}" -t "${image}" -f "${DOCKERFILE}" "${CONTEXT}" --no-cache
+  docker build --pull --no-cache --build-arg NGINX_IMAGE_TAG="${BASE_NGINX_IMAGE_TAG}" -t "${image}" -f "${DOCKERFILE}" "${CONTEXT}"
   docker push "${image}"
 }
 
